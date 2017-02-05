@@ -4,9 +4,11 @@ import Link from 'next/link'
 
 export default class extends React.Component {
   constructor(props) {
-    super(props);
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.state = {wines: []};
+    super(props)
+    this.handleSubmit = this.handleSubmit.bind(this)
+    this.state = { wines: [] }
+    // this.apiUrl = 'http://localhost:4000'
+    this.apiUrl = 'https://vinora-api.herokuapp.com'
   }
 
   static async getInitialProps ({ query }) {
@@ -27,9 +29,9 @@ export default class extends React.Component {
 
   async getWines() {
     try {
-      let response = await fetch('https://facebook.github.io/react-native/movies.json');
-      let responseJson = await response.json();
-      return responseJson.movies;
+      let response = await fetch(this.apiUrl)
+      let responseJson = await response.json()
+      return responseJson
     } catch(error) {
       console.error(error);
     }
@@ -48,11 +50,30 @@ export default class extends React.Component {
 class WineList extends React.Component {
   render() {
     return (
-      <ul>
+      <table>
+        <thead>
+        <tr>
+          <th>List name</th>
+          <th>List price</th>
+          <th>Name (Guessed)</th>
+          <th>Producer (Guessed)</th>
+          <th>Rating</th>
+          <th># of reviews</th>
+        </tr>
+        </thead>
+        <tbody>
         {this.props.wines.map(wine => (
-          <li key={wine.id}>{wine.title}</li>
+          <tr key={wine.id}>
+          <td><a href={wine['@id']} target="_blank">{wine.pdfName}</a></td>
+          <td>{wine.pdfPrice}</td>
+          <td>{wine.name}</td>
+          <td><a href={wine.manufacturer.url} target="_blank">{wine.manufacturer.name}</a></td>
+          <td>{wine.aggregateRating.ratingValue}</td>
+          <td>{wine.aggregateRating.reviewCount}</td>
+          </tr>
         ))}
-      </ul>
+        </tbody>
+      </table>
     );
   }
 }
